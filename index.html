@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Master Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f8f8f8;
+            --bg-secondary: #ffffff;
+            --text-primary: #323437;
+            --text-secondary: #646669;
+            --accent: #10b981;
+            --error: #ef4444;
+            --correct: #10b981;
+            --border: #e5e5e5;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1b26;
+            --bg-secondary: #24283b;
+            --text-primary: #a9b1d6;
+            --text-secondary: #565f89;
+            --accent: #7aa2f7;
+            --error: #f7768e;
+            --correct: #9ece6a;
+            --border: #414868;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .navbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-width: 200px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .home-section {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .difficulty-btn.active {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .goal-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .goal-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .goal-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .start-btn {
+            padding: 1rem 3rem;
+            border-radius: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .typing-section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .typing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .typing-box {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            min-height: 200px;
+            position: relative;
+            line-height: 2;
+            font-size: 1.5rem;
+            user-select: none;
+        }
+
+        .word {
+            display: inline-block;
+            margin: 0 4px;
+            position: relative;
+        }
+
+        .char {
+            color: var(--text-secondary);
+            transition: all 0.1s;
+        }
+
+        .char.correct {
+            color: var(--correct);
+        }
+
+        .char.incorrect {
+            color: var(--error);
+        }
+
+        .word.error {
+            background: rgba(239, 68, 68, 0.15);
+            border-radius: 4px;
+            padding: 0 4px;
+        }
+
+        [data-theme="dark"] .word.error {
+            background: rgba(247, 118, 142, 0.2);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.5em;
+            background: var(--accent);
+            animation: blink 1s infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .secondary-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .secondary-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .result-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .result-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .leaderboard-table th {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 700;
+        }
+
+        .history-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .typing-box {
+                font-size: 1.2rem;
+                padding: 1.5rem;
+            }
+
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-keyboard"></i>
+            <span>TypingMaster</span>
+        </div>
+        <div class="nav-icons">
+            <button class="icon-btn" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div style="position: relative;">
+                <button class="icon-btn" id="profileBtn">
+                    <i class="fas fa-user"></i>
+                </button>
+                <div class="dropdown" id="profileDropdown">
+                    <div class="dropdown-item" onclick="showSection('profile')">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Edit Profile</span>
+                    </div>
+                    <div class="dropdown-item" onclick="showSection('leaderboard')">
+                        <i class="fas fa-trophy"></i>
+                        <span>Leaderboard</span>
+                    </div>
+                    <div class="dropdown-item" onclick="showSection('about')">
+                        <i class="fas fa-info-circle"></i>
+                        <span>About Creator</span>
+                    </div>
+                    <div class="dropdown-item" onclick="showSection('contact')">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </div>
+                    <div class="dropdown-item">
+                        <i class="fas fa-crown"></i>
+                        <span>Subscription</span>
+                    </div>
+                    <div class="dropdown-item" onclick="logout()" style="color: var(--error);">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
+            <button class="icon-btn" id="resultBtn" onclick="showSection('history')">
+                <i class="fas fa-chart-line"></i>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home Section -->
+        <section id="homeSection" class="home-section">
+            <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem;">
+                Master Your Typing Skills
+            </h1>
+            <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 2rem;">
+                Choose your difficulty and start improving today
+            </p>
+
+            <div class="difficulty-selector">
+                <button class="difficulty-btn active" data-difficulty="easy" onclick="selectDifficulty('easy')">
+                    <i class="fas fa-smile"></i> Easy
+                </button>
+                <button class="difficulty-btn" data-difficulty="medium" onclick="selectDifficulty('medium')">
+                    <i class="fas fa-meh"></i> Medium
+                </button>
+                <button class="difficulty-btn" data-difficulty="hard" onclick="selectDifficulty('hard')">
+                    <i class="fas fa-fire"></i> Hard
+                </button>
+            </div>
+
+            <div class="goal-selector">
+                <button class="goal-btn active" data-time="15" onclick="selectTime(15)">15s</button>
+                <button class="goal-btn" data-time="30" onclick="selectTime(30)">30s</button>
+                <button class="goal-btn" data-time="60" onclick="selectTime(60)">60s</button>
+                <button class="goal-btn" data-time="120" onclick="selectTime(120)">120s</button>
+            </div>
+
+            <button class="start-btn" onclick="startTest()">
+                <i class="fas fa-play"></i> Start Typing Test
+            </button>
+        </section>
+
+        <!-- Typing Test Section -->
+        <section id="typingSection" class="typing-section hidden">
+            <div class="typing-header">
+                <div class="timer" id="timer">30</div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <span id="difficultyLabel" style="color: var(--text-secondary);">Medium</span>
+                    <button class="secondary-btn" onclick="restartTest()">
+                        <i class="fas fa-redo"></i> Restart
+                    </button>
+                </div>
+            </div>
+
+            <div class="typing-box" id="typingBox">
+                <!-- Words will be generated here -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="secondary-btn" onclick="showSection('home')">
+                    <i class="fas fa-home"></i> Back to Home
+                </button>
+            </div>
+        </section>
+
+        <!-- Result Section -->
+        <section id="resultSection" class="result-section hidden">
+            <div class="result-card">
+                <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem;">
+                    Test Complete! 🎉
+                </h2>
+
+                <div class="result-grid">
+                    <div class="result-stat">
+                        <div class="stat-value" id="wpmResult">0</div>
+                        <div class="stat-label">WPM</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="stat-value" id="accuracyResult">0%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="stat-value" id="rawWpmResult">0</div>
+                        <div class="stat-label">Raw WPM</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="stat-value" id="errorsResult">0</div>
+                        <div class="stat-label">Errors</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="start-btn" onclick="restartTest()">
+                        <i class="fas fa-redo"></i> Retry
+                    </button>
+                    <button class="secondary-btn" onclick="showSection('history')">
+                        <i class="fas fa-chart-line"></i> View History
+                    </button>
+                    <button class="secondary-btn" onclick="showSection('home')">
+                        <i class="fas fa-home"></i> Home
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- History Section -->
+        <section id="historySection" class="result-section hidden">
+            <div class="result-card">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">
+                    <i class="fas fa-history"></i> Your History
+                </h2>
+
+                <div id="historyList">
+                    <!-- History items will be added here -->
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-secondary);">Problematic Keys</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;" id="problematicKeys">
+                        <!-- Will show top 3 problematic keys -->
+                    </div>
+                </div>
+
+                <div class="action-buttons" style="margin-top: 2rem;">
+                    <button class="secondary-btn" onclick="showSection('home')">
+                        <i class="fas fa-home"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section id="leaderboardSection" class="result-section hidden">
+            <div class="result-card">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">
+                    <i class="fas fa-trophy"></i> Leaderboard
+                </h2>
+
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>User</th>
+                            <th>WPM</th>
+                            <th>Accuracy</th>
+                            <th>Difficulty</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <!-- Leaderboard data -->
+                    </tbody>
+                </table>
+
+                <div class="action-buttons" style="margin-top: 2rem;">
+                    <button class="secondary-btn" onclick="showSection('home')">
+                        <i class="fas fa-home"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profileSection" class="result-section hidden">
+            <div class="result-card">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">
+                    <i class="fas fa-user-circle"></i> Edit Profile
+                </h2>
+                <p style="color: var(--text-secondary); text-align: center;">
+                    Profile editing features coming soon...
+                </p>
+                <div class="action-buttons" style="margin-top: 2rem;">
+                    <button class="secondary-btn" onclick="showSection('home')">
+                        <i class="fas fa-home"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="aboutSection" class="result-section hidden">
+            <div class="result-card">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">
+                    <i class="fas fa-info-circle"></i> About Creator
+                </h2>
+                <p style="color: var(--text-secondary); line-height: 1.8;">
+                    TypingMaster Pro is built to help you improve your typing speed and accuracy. 
+                    Practice regularly with different difficulty levels to become a typing master!
+                </p>
+                <div class="action-buttons" style="margin-top: 2rem;">
+                    <button class="secondary-btn" onclick="showSection('home')">
+                        <i class="fas fa-home"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contactSection" class="result-section hidden">
+            <div class="result-card">
+                <h2 style="font-size: 2rem; margin-bottom: 2rem;">
+                    <i class="fas fa-envelope"></i> Contact Creator
+                </h2>
+                <p style="color: var(--text-secondary); text-align: center;">
+                    Contact form coming soon...
+                </p>
+                <div class="action-buttons" style="margin-top: 2rem;">
+                    <button class="secondary-btn" onclick="showSection('home')">
+                        <i class="fas fa-home"></i> Back to Home
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // State Management
+        const state = {
+            isLoggedIn: true, // Set to true for demo, implement auth check
+            currentDifficulty: 'easy',
+            currentTime: 15,
+            timeLeft: 15,
+            isTestActive: false,
+            currentWordIndex: 0,
+            currentCharIndex: 0,
+            words: [],
+            correctChars: 0,
+            incorrectChars: 0,
+            errors: 0,
+            timerInterval: null,
+            testHistory: []
+        };
+
+        // Word Banks by Difficulty
+        const wordBanks = {
+            easy: ['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'i', 'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she', 'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their'],
+            medium: ['about', 'which', 'people', 'could', 'other', 'these', 'first', 'after', 'very', 'where', 'around', 'before', 'should', 'through', 'number', 'never', 'might', 'every', 'between', 'during', 'another', 'because', 'without', 'against', 'several', 'become', 'nothing', 'provide', 'possible', 'together'],
+            hard: ['necessary', 'although', 'throughout', 'understand', 'responsibility', 'circumstance', 'development', 'environment', 'experience', 'government', 'information', 'international', 'organization', 'particular', 'performance', 'professional', 'relationship', 'significant', 'temperature', 'understanding!', 'university?', 'application,', 'communication;', 'consideration:', 'contribution"', 'demonstration\'', 'implementation@', 'infrastructure#', 'investigation$']
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            generateLeaderboard();
+        });
+
+        function initializeApp() {
+            // Theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Profile dropdown
+            const profileBtn = document.getElementById('profileBtn');
+            const profileDropdown = document.getElementById('profileDropdown');
+            
+            profileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('active');
+            });
+
+            document.addEventListener('click', () => {
+                profileDropdown.classList.remove('active');
+            });
+
+            // Check if user is logged in
+            if (!state.isLoggedIn) {
+                showToast('Please login to access all features');
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.querySelector('#themeToggle i');
+            
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+
+        function selectDifficulty(difficulty) {
+            state.currentDifficulty = difficulty;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.difficulty-btn').classList.add('active');
+        }
+
+        function selectTime(time) {
+            state.currentTime = time;
+            state.timeLeft = time;
+            document.querySelectorAll('.goal-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function generateWords() {
+            const difficulty = state.currentDifficulty;
+            const bank = wordBanks[difficulty];
+            const wordCount = Math.ceil(state.currentTime * 2.5); // More words for longer tests
+            
+            state.words = [];
+            for (let i = 0; i < wordCount; i++) {
+                state.words.push(bank[Math.floor(Math.random() * bank.length)]);
+            }
+        }
+
+        function renderWords() {
+            const typingBox = document.getElementById('typingBox');
+            typingBox.innerHTML = '';
+            
+            state.words.forEach((word, wordIndex) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'word';
+                wordSpan.dataset.wordIndex = wordIndex;
+                
+                word.split('').forEach((char, charIndex) => {
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'char';
+                    charSpan.textContent = char;
+                    charSpan.dataset.charIndex = charIndex;
+                    wordSpan.appendChild(charSpan);
+                });
+                
+                typingBox.appendChild(wordSpan);
+            });
+            
+            updateCursor();
+        }
+
+        function updateCursor() {
+            // Remove existing cursor
+            const existingCursor = document.querySelector('.cursor');
+            if (existingCursor) existingCursor.remove();
+            
+            const currentWord = document.querySelector(`[data-word-index="${state.currentWordIndex}"]`);
+            if (!currentWord) return;
+            
+            const currentChar = currentWord.querySelector(`[data-char-index="${state.currentCharIndex}"]`);
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            
+            if (currentChar) {
+                currentChar.before(cursor);
+            } else {
+                currentWord.appendChild(cursor);
+            }
+        }
+
+        function startTest() {
+            generateWords();
+            renderWords();
+            showSection('typing');
+            
+            state.timeLeft = state.currentTime;
+            state.isTestActive = false;
+            state.currentWordIndex = 0;
+            state.currentCharIndex = 0;
+            state.correctChars = 0;
+            state.incorrectChars = 0;
+            state.errors = 0;
+            
+            document.getElementById('timer').textContent = state.timeLeft;
+            document.getElementById('difficultyLabel').textContent = 
+                state.currentDifficulty.charAt(0).toUpperCase() + state.currentDifficulty.slice(1);
+            
+            // Focus on typing box
+            document.addEventListener('keydown', handleTyping);
+            showToast('Start typing to begin!');
+        }
+
+        function startTimer() {
+            if (state.timerInterval) return;
+            
+            state.timerInterval = setInterval(() => {
+                state.timeLeft--;
+                document.getElementById('timer').textContent = state.timeLeft;
+                
+                if (state.timeLeft <= 0) {
+                    endTest();
+                }
+            }, 1000);
+        }
+
+        function handleTyping(e) {
+            if (!state.isTestActive && e.key.length === 1) {
+                state.isTestActive = true;
+                startTimer();
+            }
+            
+            if (!state.isTestActive) return;
+            
+            const currentWord = state.words[state.currentWordIndex];
+            const currentWordElement = document.querySelector(`[data-word-index="${state.currentWordIndex}"]`);
+            
+            if (e.key === ' ') {
+                e.preventDefault();
+                
+                // Move to next word
+                if (state.currentCharIndex > 0) {
+                    state.currentWordIndex++;
+                    state.currentCharIndex = 0;
+                    
+                    if (state.currentWordIndex >= state.words.length) {
+                        endTest();
+                        return;
+                    }
+                    
+                    updateCursor();
+                }
+            } else if (e.key === 'Backspace') {
+                e.preventDefault();
+                // Backspace disabled in this implementation
+                showToast('Backspace is disabled!');
+            } else if (e.key.length === 1) {
+                e.preventDefault();
+                
+                const currentChar = currentWord[state.currentCharIndex];
+                const charElement = currentWordElement.querySelector(`[data-char-index="${state.currentCharIndex}"]`);
+                
+                if (charElement) {
+                    if (e.key === currentChar) {
+                        charElement.classList.add('correct');
+                        state.correctChars++;
+                    } else {
+                        charElement.classList.add('incorrect');
+                        currentWordElement.classList.add('error');
+                        state.incorrectChars++;
+                        state.errors++;
+                    }
+                    
+                    state.currentCharIndex++;
+                    updateCursor();
+                    
+                    // Auto-advance if word is complete
+                    if (state.currentCharIndex >= currentWord.length) {
+                        setTimeout(() => {
+                            state.currentWordIndex++;
+                            state.currentCharIndex = 0;
+                            
+                            if (state.currentWordIndex >= state.words.length) {
+                                endTest();
+                                return;
+                            }
+                            
+                            updateCursor();
+                        }, 100);
+                    }
+                }
+            }
+        }
+
+        function endTest() {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            state.isTestActive = false;
+            document.removeEventListener('keydown', handleTyping);
+            
+            calculateResults();
+            showSection('result');
+        }
+
+        function calculateResults() {
+            const totalChars = state.correctChars + state.incorrectChars;
+            const accuracy = totalChars > 0 ? ((state.correctChars / totalChars) * 100).toFixed(1) : 0;
+            const timeInMinutes = (state.currentTime - state.timeLeft) / 60;
+            const wpm = Math.round((state.correctChars / 5) / timeInMinutes);
+            const rawWpm = Math.round((totalChars / 5) / timeInMinutes);
+            
+            document.getElementById('wpmResult').textContent = wpm;
+            document.getElementById('accuracyResult').textContent = accuracy + '%';
+            document.getElementById('rawWpmResult').textContent = rawWpm;
+            document.getElementById('errorsResult').textContent = state.errors;
+            
+            // Save to history
+            state.testHistory.unshift({
+                wpm: wpm,
+                accuracy: accuracy,
+                difficulty: state.currentDifficulty,
+                time: state.currentTime,
+                date: new Date().toLocaleString()
+            });
+            
+            if (state.testHistory.length > 10) {
+                state.testHistory = state.testHistory.slice(0, 10);
+            }
+            
+            updateHistory();
+        }
+
+        function updateHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (state.testHistory.length === 0) {
+                historyList.innerHTML = '<p style="color: var(--text-secondary); text-align: center;">No history yet. Complete a test to see your results!</p>';
+                return;
+            }
+            
+            state.testHistory.forEach((test, index) => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">
+                            Test #${state.testHistory.length - index}
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.875rem;">
+                            ${test.date}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">
+                            ${test.wpm} WPM
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.875rem;">
+                            ${test.accuracy}% accuracy • ${test.difficulty}
+                        </div>
+                    </div>
+                `;
+                historyList.appendChild(item);
+            });
+            
+            // Update problematic keys (mock data)
+            const problematicKeys = document.getElementById('problematicKeys');
+            problematicKeys.innerHTML = `
+                <div style="padding: 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700;">e</div>
+                    <div style="color: var(--text-secondary); font-size: 0.875rem;">12 errors</div>
+                </div>
+                <div style="padding: 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700;">t</div>
+                    <div style="color: var(--text-secondary); font-size: 0.875rem;">8 errors</div>
+                </div>
+                <div style="padding: 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700;">a</div>
+                    <div style="color: var(--text-secondary); font-size: 0.875rem;">6 errors</div>
+                </div>
+            `;
+        }
+
+        function generateLeaderboard() {
+            const leaderboard = [
+                { name: 'SpeedKing', wpm: 120, accuracy: 98.5, difficulty: 'Hard' },
+                { name: 'TypeMaster', wpm: 110, accuracy: 97.2, difficulty: 'Hard' },
+                { name: 'FastFingers', wpm: 105, accuracy: 96.8, difficulty: 'Medium' },
+                { name: 'QuickTyper', wpm: 95, accuracy: 95.5, difficulty: 'Medium' },
+                { name: 'KeyboardNinja', wpm: 90, accuracy: 94.3, difficulty: 'Medium' },
+            ];
+            
+            const tbody = document.getElementById('leaderboardBody');
+            tbody.innerHTML = '';
+            
+            leaderboard.forEach((user, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="rank-badge">${index + 1}</span></td>
+                    <td style="font-weight: 600;">${user.name}</td>
+                    <td style="color: var(--accent); font-weight: 700;">${user.wpm}</td>
+                    <td>${user.accuracy}%</td>
+                    <td>${user.difficulty}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function restartTest() {
+            startTest();
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            const sections = ['home', 'typing', 'result', 'history', 'leaderboard', 'profile', 'about', 'contact'];
+            sections.forEach(s => {
+                const element = document.getElementById(s + 'Section');
+                if (element) element.classList.add('hidden');
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(section + 'Section');
+            if (selectedSection) {
+                selectedSection.classList.remove('hidden');
+            }
+            
+            // Close dropdown
+            document.getElementById('profileDropdown').classList.remove('active');
+        }
+
+        function logout() {
+            showToast('Logged out successfully!');
+            state.isLoggedIn = false;
+            setTimeout(() => {
+                showSection('home');
+            }, 1000);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
